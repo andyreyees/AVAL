@@ -1,4 +1,6 @@
-# Aval – Títulos y certificaciones en blockchain - Proyecto Supernovas
+# Aval – Títulos y certificaciones en blockchain
+
+Proyecto Startup Supernovas
 
 Descripción
 
