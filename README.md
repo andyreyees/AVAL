@@ -1,4 +1,4 @@
-# Aval – Títulos y certificaciones en blockchain
+# Aval – Títulos y certificaciones en blockchain - Proyecto Supernovas
 
 En la cadena solo se guarda el hash SHA-256 de cada documento. Las instituciones autorizadas emiten y revocan; cualquiera verifica.
 
