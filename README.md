@@ -1,5 +1,11 @@
 # Aval – Títulos y certificaciones en blockchain - Proyecto Supernovas
 
+Descripción
+
+Aval es un sistema basado en tecnología blockchain que permite emitir, verificar y revocar títulos y certificaciones digitales. Para garantizar la integridad de los documentos, el sistema almacena únicamente su hash SHA-256 en la blockchain, permitiendo comprobar si un documento ha sido alterado.
+
+En el sistema participan instituciones autorizadas, administradores y verificadores. Los verificadores pueden validar un documento mediante el archivo original o utilizando el código QR asociado.
+
 En la cadena solo se guarda el hash SHA-256 de cada documento. Las instituciones autorizadas emiten y revocan; cualquiera verifica.
 
 ## Correrlo en local (3 terminales)
