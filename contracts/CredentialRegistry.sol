@@ -3,6 +3,8 @@ pragma solidity ^0.8.24;
 
 /// Registro de títulos. Solo guarda hashes. Las instituciones piden acceso y el administrador las aprueba.
 contract CredentialRegistry {
+
+    // Estados posibles de una institución dentro del sistema.
     enum Status { None, Pending, Active, Rejected }
     struct Institution { Status status; string name; string domain; uint64 updatedAt; }
     struct Credential { address issuer; uint64 issuedAt; bool revoked; string kind; }
