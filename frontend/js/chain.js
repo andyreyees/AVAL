@@ -1,5 +1,8 @@
 import { CFG } from "./config.js";
-import { isConnected, requestAccess, signTransaction } from "https://esm.sh/@stellar/freighter-api@2.0.0";
+import * as FreighterNS from "https://esm.sh/@stellar/freighter-api@2.0.0";
+// Según cómo esm.sh empaquete la librería, las funciones vienen sueltas o dentro de "default"
+const F = FreighterNS.isConnected ? FreighterNS : (FreighterNS.default || FreighterNS);
+const { isConnected, requestAccess, signTransaction } = F;
 const S = window.StellarSdk, NET = S.Networks.TESTNET;
 export { S };
 const server = new S.Horizon.Server(CFG.horizon);
