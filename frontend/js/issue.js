@@ -1,5 +1,5 @@
-import { $, esc, linkFor, hashFile, copy, dropzone, toast, errMsg } from "./utils.js";
-import { state, writer, connect } from "./chain.js";
+import { $, esc, cut, linkFor, hashFile, copy, dropzone, toast, errMsg } from "./utils.js";
+import { state, send, S, idOf, connect } from "./chain.js";
 
 export function render(el) {
   if (!state.address) return gate(el, "Conecte la billetera de su institución para emitir documentos.", true);
@@ -24,8 +24,8 @@ export function render(el) {
     go.disabled = true; go.textContent = "Confirme en su billetera…";
     try {
       const hs = await Promise.all(files.map(hashFile));
-      const c = writer();
-      await (await (hs.length === 1 ? c.issue(hs[0], kind) : c.issueBatch(hs, kind))).wait();
+      const ts = Math.floor(Date.now() / 1000);
+      for (let i = 0; i < hs.length; i += 50) await send(b => hs.slice(i, i + 50).forEach(h => b.addOperation(S.Operation.manageData({ name: "c:" + idOf(h), value: `${ts}|${cut(kind, 50)}` }))));
       toast(`${hs.length} documento(s) emitido(s)`);
       $("#done", el).innerHTML = `<h3>Listos para compartir</h3>` + files.map((f, i) => `<div class="item"><div><strong>${esc(f.name)}</strong><br><button class="link" data-h="${hs[i]}">Copiar enlace</button></div><div class="qr" data-h="${hs[i]}"></div></div>`).join("");
       el.querySelectorAll(".qr").forEach(q => new window.QRCode(q, { text: linkFor(q.dataset.h), width: 88, height: 88 }));
@@ -37,6 +37,6 @@ export function render(el) {
 }
 
 function gate(el, msg, canConnect) {
-  el.innerHTML = `<h1>Emitir documentos</h1><div class="empty"><p>${msg}</p>${canConnect ? '<button class="btn" id="c">Conectar billetera</button>' : ""}</div>`;
+  el.innerHTML = `<h1>Emitir documentos</h1><div class="empty"><p>${msg}</p>${canConnect ? '<button class="btn" id="c">Conectar Freighter</button>' : ""}</div>`;
   if (canConnect) $("#c", el).onclick = () => connect().catch(e => toast(errMsg(e), "err"));
 }
