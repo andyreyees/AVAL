@@ -2,9 +2,10 @@ export const $ = (s, el = document) => el.querySelector(s);
 export const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 export const short = h => h.slice(0, 8) + "…" + h.slice(-6);
 export const fmtDate = ts => new Date(Number(ts) * 1000).toLocaleDateString("es-CR", { year: "numeric", month: "long", day: "numeric" });
-export const isHash = h => /^0x[0-9a-fA-F]{64}$/.test(h);
+export const isHash = h => /^(0x)?[0-9a-fA-F]{62,64}$/.test(h);
+export const cut = (s, n) => { let o = ""; for (const c of s) { if (new TextEncoder().encode(o + c).length > n) break; o += c; } return o; };
 export const linkFor = h => `${location.origin}${location.pathname}#/verificar/${h}`;
-export const errMsg = e => e.reason || e.shortMessage || e.message || "Algo salió mal";
+export const errMsg = e => e?.response?.data?.extras?.result_codes?.operations?.join(", ") || e?.response?.data?.title || e.message || "Algo salió mal";
 
 export async function hashFile(file) {
   const buf = await crypto.subtle.digest("SHA-256", await file.arrayBuffer());

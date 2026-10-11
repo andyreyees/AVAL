@@ -1,6 +1,6 @@
 import { domainOk, DEMO } from "./dns.js";
 import { $, esc, short, fmtDate, isHash, linkFor, hashFile, copy, dropzone, errMsg } from "./utils.js";
-import { reader, configured } from "./chain.js";
+import { lookup, configured } from "./chain.js";
 
 const ICON = {
   ok: '<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
@@ -18,7 +18,7 @@ export function render(el, param) {
     <p class="foot">¿Representa a una institución? <a href="#/institucion">Solicite acceso para emitir</a></p>`;
   const out = $("#out", el);
   dropzone($("#drop", el), { onFiles: async fs => fs[0] && check(await hashFile(fs[0]), out) });
-  $("#hform", el).onsubmit = e => { e.preventDefault(); const h = $("#hin", el).value.trim(); isHash(h) ? check(h, out) : show(out, "warn", "Huella no válida", "<p>Debe empezar con 0x y tener 64 caracteres.</p>"); };
+  $("#hform", el).onsubmit = e => { e.preventDefault(); const h = $("#hin", el).value.trim(); isHash(h) ? check(h, out) : show(out, "warn", "Huella no válida", "<p>Debe tener 62 a 64 caracteres hexadecimales.</p>"); };
   if (param && isHash(param)) check(param, out);
 }
 
@@ -29,10 +29,10 @@ function show(out, kind, title, body, h) {
 }
 
 async function check(h, out) {
-  if (!configured()) return show(out, "warn", "Falta configurar", "<p>Despliegue el contrato con <code>npm run deploy:local</code>.</p>");
+  if (!configured()) return show(out, "warn", "Falta configurar", "<p>Despliegue el contrato con <code>configurar la cuenta admin en js/config.js</code>.</p>");
   show(out, "warn", "Consultando…", "<p>Leyendo el registro.</p>");
   try {
-    const r = await reader().verify(h);
+    const r = await lookup(h);
     const rows = `<dl><dt>Huella</dt><dd><code>${esc(short(h))}</code></dd>`;
     if (!r.exists) return show(out, "bad", "No encontrado", `<p>Este archivo no está registrado. Puede ser falso o haber sido modificado.</p>${rows}</dl>`, h);
     const dns = r.issuerDomain ? await domainOk(r.issuerDomain, r.issuer) : false;

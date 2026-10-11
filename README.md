@@ -1,42 +1,19 @@
-# Aval – Títulos y certificaciones en blockchain
+# Aval en Stellar (testnet)
 
-Proyecto Startup Supernovas
+Sin contratos: usa operaciones nativas de Stellar y la billetera Freighter.
+- Cada título = una entrada de datos `c:<huella>` en la cuenta de la institución.
+- El admin guarda las instituciones aprobadas como entradas `inst:<cuenta>` en su cuenta.
+- Pedir acceso = una transacción con `home_domain` + nombre + 1 XLM de prueba al admin (memo `aval-req`).
 
-Descripción
+## Pasos
+1. Instale Freighter, cambie a **Testnet** y cree dos cuentas: **Admin** y **Colegio**.
+2. Fondee ambas con Friendbot (botón en Freighter cuando la cuenta está sin fondos).
+3. Copie la dirección G de **Admin** en `frontend/js/config.js` (campo `admin`).
+4. `npm run web` y abra la URL.
 
-Aval es un sistema basado en tecnología blockchain que permite emitir, verificar y revocar títulos y certificaciones digitales. Para garantizar la integridad de los documentos, el sistema almacena únicamente su hash SHA-256 en la blockchain, permitiendo comprobar si un documento ha sido alterado.
+## Recorrido
+Admin (conectado) emite como "ULACIT (demo)" → verificar en incógnito → Colegio pide acceso → Admin aprueba → Colegio emite → revocar/suspender.
 
-En el sistema participan instituciones autorizadas, administradores y verificadores. Los verificadores pueden validar un documento mediante el archivo original o utilizando el código QR asociado.
-
-En la cadena solo se guarda el hash SHA-256 de cada documento. Las instituciones autorizadas emiten y revocan; cualquiera verifica.
-
-## Correrlo en local (3 terminales)
-```
-npm install
-npm run node           # 1) blockchain local
-npm run deploy:local   # 2) despliega y genera frontend/js/config.js
-npm run web            # 3) sirve el frontend (necesita servidor por usar módulos JS)
-```
-MetaMask: agregue la red `http://127.0.0.1:8545` (chainId 31337) e importe la llave de la cuenta #0 de `hardhat node`. Esa cuenta es administrador e institución "ULACIT (demo)".
-
-Pruebas del contrato: `npm test`
-
-## Estructura del frontend
-- `index.html` · `css/styles.css`
-- `js/`: `config.js` (generado), `abi.js`, `chain.js` (billetera/contrato), `utils.js`, `verify.js`, `issue.js`, `registry.js`, `admin.js`, `app.js` (rutas)
-
-## Demo
-1. Emitir: suba un PDF → emitido, con QR y enlace.
-2. Verificar: el mismo PDF → válido. Cambie una letra → no encontrado.
-3. Mis emisiones: revoque → "Revocado".
-4. Instituciones (administrador): autorice otra billetera.
-
-## Sepolia
-Copie `.env.example` a `.env` y use `npm run deploy:sepolia`.
-
-## Roles y confianza
-- **Verificador:** no necesita cuenta. Sube el PDF o escanea el QR.
-- **Institución:** conecta su billetera, pide acceso (nombre + dominio) y publica un TXT en `_aval.<dominio>` con `aval-verify=<su billetera>`.
-- **Administrador (quien despliega el contrato):** revisa y aprueba o rechaza. Puede suspender una institución; sus documentos pasan a mostrarse como "no autorizada".
-- **Modo demo (por defecto):** la prueba de dominio se simula y sale "comprobado (demo)". Para usar el DNS real, despliegue con `DEMO=false` o ponga `demo: false` en `frontend/js/config.js`.
-- Con demo apagado, el DNS solo sale "comprobado" con un dominio que usted controle; cree el TXT en su propio dominio y use ese dominio al solicitar acceso.
+## Límites del prototipo
+Una cuenta admite unas 1000 entradas y cada una reserva 0.5 XLM; para producción se usaría Soroban u otra estructura.
+Cualquiera puede escribir datos en su propia cuenta, pero Aval solo reconoce como válidas las de instituciones aprobadas.
